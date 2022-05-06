@@ -6,22 +6,22 @@ import com.africa.semicolon.passwordmanagerapplication.dtos.responses.APIRespons
 import com.africa.semicolon.passwordmanagerapplication.exceptions.PasswordManagerApplicationException;
 import com.africa.semicolon.passwordmanagerapplication.services.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@Controller
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
+    @Autowired
     private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+//    public UserController(UserService userService) {
+//        this.userService = userService;
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<?> createNewUserAccount(@RequestBody AddUserRequest userRequest){

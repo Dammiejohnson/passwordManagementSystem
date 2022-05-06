@@ -5,6 +5,7 @@ import com.africa.semicolon.passwordmanagerapplication.dtos.requests.AddUserRequ
 import com.africa.semicolon.passwordmanagerapplication.dtos.requests.UpdateUserDTO;
 import com.africa.semicolon.passwordmanagerapplication.dtos.requests.UserDTO;
 import com.africa.semicolon.passwordmanagerapplication.dtos.responses.UpdateUserResponse;
+import com.africa.semicolon.passwordmanagerapplication.exceptions.InvalidUserDetailsException;
 import com.africa.semicolon.passwordmanagerapplication.exceptions.PasswordManagerApplicationException;
 import com.africa.semicolon.passwordmanagerapplication.models.Url;
 import com.africa.semicolon.passwordmanagerapplication.models.User;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImplementation implements UserService{
@@ -33,23 +36,55 @@ public class UserServiceImplementation implements UserService{
         Optional<User> optionalUser = userRepository.findUserByEmailAddress(userRequest.getEmailAddress());
         if(optionalUser.isPresent()) throw new PasswordManagerApplicationException("User already exists");
         User user = new User();
-        modelMapper.map(userRequest, user);
-        userRepository.save(user);
+        if(isEmailValid(userRequest)){
+            if (isPasswordValid(userRequest)) {
+                modelMapper.map(userRequest, user);
+                userRepository.save(user);
+            }
+        }
+        //boolean status = user.isLoggedin();
+        user.setLoggedin(true);
         UserDTO userDTO = new UserDTO();
         modelMapper.map(user, userDTO);
         return userDTO;
     }
 
-    @Override
-    public Url addUrl(String userId, Url url) {
-        User user = userRepository.findUserById(userId).orElseThrow(( )-> new PasswordManagerApplicationException("user account with id does not exists"));
-        Url urlAddress = urlRepository.save(url);
-        Set<Url> urls =user.getUrls();
-        if(urls!=null){
-        urls.add(urlAddress);}
-        userRepository.save(user);
-        return urlAddress;
+    private boolean isEmailValid(AddUserRequest userRequest){
+        String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(userRequest.getEmailAddress());
+        if (matcher.matches()) {
+            User user = new User();
+            user.setEmailAddress(userRequest.getEmailAddress());
+            return true;
+        } else throw new InvalidUserDetailsException("enter a valid email");
     }
+
+    private boolean isPasswordValid(AddUserRequest userRequest){
+        String regex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(userRequest.getPassword());
+        if (matcher.matches()) {
+            User user = new User();
+            user.setPassword(userRequest.getPassword());
+            return true;
+        } else throw new InvalidUserDetailsException("password must be valid having at least one Uppercase, one lowercase, " +
+                "one special character and length should be between 8 and 20 characters");
+    }
+
+//    @Override
+//    public Url addUrl(String userId, Url url) {
+//        User user = userRepository.findUserById(userId).orElseThrow(( )-> new PasswordManagerApplicationException("user account with id does not exists"));
+//        Url urlAddress = urlRepository.save(url);
+//        Set<Url> urls =user.getUrls();
+//        if(urls!=null){
+//        urls.add(urlAddress);}
+//        userRepository.save(user);
+//        return urlAddress;
+//    }
 
     @Override
     public UserDTO findUserById(String userId) {

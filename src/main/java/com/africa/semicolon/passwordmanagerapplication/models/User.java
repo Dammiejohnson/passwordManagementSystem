@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Document
@@ -20,8 +21,9 @@ public class User {
     private String emailAddress;
     private String phoneNumber;
     private String password;
+    private boolean isLoggedin;
     @DBRef
-    private Set<Url> urls;
+    private Set<Url> urls = new HashSet<>();
 
 
 }

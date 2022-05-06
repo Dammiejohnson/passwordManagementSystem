@@ -14,6 +14,7 @@ public class Url {
     @Id
     private String urlId;
     private String urlAddress;
+    private String UrlEmailAddress;
     private String password;
 
     public Url(String urlAddress, String password) {

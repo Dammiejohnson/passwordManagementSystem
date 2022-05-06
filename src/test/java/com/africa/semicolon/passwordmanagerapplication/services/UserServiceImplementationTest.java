@@ -28,24 +28,30 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
+//@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
 class UserServiceImplementationTest {
 
     @Autowired
     private UserService userService;
-
+    @ Autowired
+    private UserRepository userRepository;
     private AddUserRequest userRequest;
 
     @BeforeEach
     void setUp() {
-        Set<Url> set = new HashSet<>();
+        //Set<Url> set = new HashSet<>();
         userRequest = AddUserRequest.builder()
                 .username("damijay")
-                .emailAddress("test2gmail.com")
+                .emailAddress("test2@gmail.com")
                 .phoneNumber("09012345678")
-                .password("dami")
-                .urlSet(set)
+                .password("Damilola5$")
+               // .urlSet(set)
                 .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
     }
 
     @Test
@@ -59,9 +65,9 @@ class UserServiceImplementationTest {
         userService.createAccount(userRequest);
         userRequest = AddUserRequest.builder()
                 .username("damijay")
-                .emailAddress("test2gmail.com")
+                .emailAddress("test2@gmail.com")
                 .phoneNumber("09012345678")
-                .password("dami")
+                .password("Damilola5$")
                 .build();
         assertThrows(PasswordManagerApplicationException.class, () -> userService.createAccount(userRequest));
     }
@@ -79,7 +85,7 @@ class UserServiceImplementationTest {
         UpdateUserDTO updateUserDTO = new UpdateUserDTO();
         UpdateUserResponse response = userService.updateUser(userDTO.getId(), updateUserDTO);
         User user = userService.findUserByIdInternal(userDTO.getId());
-        assertThat(user.getEmailAddress(), is("test2gmail.com"));
+        assertThat(user.getEmailAddress(), is("test2@gmail.com"));
         assertThat(updateUserDTO.getUsername(), is(response.getUsername()));
 
     }
@@ -96,21 +102,5 @@ class UserServiceImplementationTest {
                 .build();
         RuntimeException thrown = assertThrows(PasswordManagerApplicationException.class, () -> userService.updateUser(id, updateUserDto));
         assertThat(thrown.getMessage(), is("User with this id does not exist"));
-    }
-
-    @Test
-    void testThatUserCanAddUrl(){
-        UserDTO userDTO = userService.createAccount(userRequest);
-        User user = userService.findUserByIdInternal(userDTO.getId());
-        String urlAddress = "www.facebook.com";
-        Url url = new Url(urlAddress,user.getPassword());
-        Url addedUrl = userService.addUrl(userDTO.getId(), url);
-        assertThat(addedUrl.getUrlId(), is(notNullValue()));
-        assertThat(addedUrl.getUrlAddress(), is("www.facebook.com"));
-    }
-
-    @AfterEach
-    void tearDown() {
-        userService.deleteUserByEmail("test2gmail.com");
     }
 }

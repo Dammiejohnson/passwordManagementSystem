@@ -18,5 +18,5 @@ public class UserDTO {
     private String username;
     private String emailAddress;
     private String phoneNumber;
-    private Set<Url> urlSet = new HashSet<>();
+    //private Set<Url> urlSet = new HashSet<>();
 }

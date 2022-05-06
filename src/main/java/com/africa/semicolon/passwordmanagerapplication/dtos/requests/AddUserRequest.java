@@ -18,5 +18,9 @@ public class AddUserRequest {
     private String emailAddress;
     private String phoneNumber;
     private String password;
-    private Set<Url> urlSet = new HashSet<>();
+    //private Set<Url> urlSet = new HashSet<>();
+
+    public AddUserRequest() {
+
+    }
 }

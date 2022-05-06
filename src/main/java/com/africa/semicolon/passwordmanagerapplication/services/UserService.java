@@ -10,7 +10,6 @@ import com.africa.semicolon.passwordmanagerapplication.models.User;
 
 public interface UserService {
     UserDTO createAccount(AddUserRequest userRequest);
-    Url addUrl(String userId, Url url);
     UserDTO findUserById(String userId);
     User findUserByIdInternal(String userId);
     void deleteUserByEmail(String email);
