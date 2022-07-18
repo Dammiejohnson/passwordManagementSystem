@@ -3,6 +3,7 @@ package com.africa.semicolon.passwordmanagerapplication.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,7 +22,6 @@ public class User {
     private String emailAddress;
     private String phoneNumber;
     private String password;
-    private boolean isLoggedin;
     @DBRef
     private Set<Url> urls = new HashSet<>();
 

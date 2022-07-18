@@ -2,8 +2,10 @@ package com.africa.semicolon.passwordmanagerapplication.services;
 
 import com.africa.semicolon.passwordmanagerapplication.PasswordManagerApplication;
 import com.africa.semicolon.passwordmanagerapplication.dtos.requests.AddUserRequest;
+import com.africa.semicolon.passwordmanagerapplication.dtos.requests.LoginRequest;
 import com.africa.semicolon.passwordmanagerapplication.dtos.requests.UpdateUserDTO;
 import com.africa.semicolon.passwordmanagerapplication.dtos.requests.UserDTO;
+import com.africa.semicolon.passwordmanagerapplication.dtos.responses.LoginResponse;
 import com.africa.semicolon.passwordmanagerapplication.dtos.responses.UpdateUserResponse;
 import com.africa.semicolon.passwordmanagerapplication.exceptions.InvalidUserDetailsException;
 import com.africa.semicolon.passwordmanagerapplication.exceptions.PasswordManagerApplicationException;
@@ -42,8 +44,6 @@ public class UserServiceImplementation implements UserService{
                 userRepository.save(user);
             }
         }
-        //boolean status = user.isLoggedin();
-        user.setLoggedin(true);
         UserDTO userDTO = new UserDTO();
         modelMapper.map(user, userDTO);
         return userDTO;
@@ -104,6 +104,22 @@ public class UserServiceImplementation implements UserService{
     public void deleteUserByEmail(String email) {
         User user = userRepository.findUserByEmailAddress(email).orElseThrow(( )-> new PasswordManagerApplicationException("user account with email does not exists"));
         userRepository.delete(user);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        User user = userRepository.findUserByEmailAddress(loginRequest.getUserEmail()).orElseThrow(( )-> new PasswordManagerApplicationException("user account with email does not exists"));
+        boolean isValidUser = user.getPassword().equals(loginRequest.getUserPassword());
+        LoginResponse response = new LoginResponse();
+        if(isValidUser) {
+            response.setMessage("login successful");
+            response.setUrls(user.getUrls());
+        }
+        else {
+            response.setMessage("login not successful");
+            response.setUrls(null);
+        }
+        return response;
     }
 
     @Override
