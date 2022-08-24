@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-//@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
+@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
 class UserServiceImplementationTest {
 
     @Autowired
@@ -51,7 +51,7 @@ class UserServiceImplementationTest {
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
+        userService.deleteall();
     }
 
     @Test

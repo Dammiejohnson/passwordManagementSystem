@@ -15,6 +15,7 @@ public interface UserService {
     UserDTO findUserById(String userId);
     User findUserByIdInternal(String userId);
     void deleteUserByEmail(String email);
+    void deleteall();
     LoginResponse login(LoginRequest loginRequest);
     UpdateUserResponse updateUser(String id, UpdateUserDTO updateUserDTO);
 

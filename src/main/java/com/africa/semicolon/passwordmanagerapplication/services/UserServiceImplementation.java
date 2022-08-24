@@ -13,6 +13,7 @@ import com.africa.semicolon.passwordmanagerapplication.models.Url;
 import com.africa.semicolon.passwordmanagerapplication.models.User;
 import com.africa.semicolon.passwordmanagerapplication.repositories.UrlRepository;
 import com.africa.semicolon.passwordmanagerapplication.repositories.UserRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class UserServiceImplementation implements UserService{
         if(isEmailValid(userRequest)){
             if (isPasswordValid(userRequest)) {
                 modelMapper.map(userRequest, user);
+                String myHashedPassword = DigestUtils.sha256Hex(user.getPassword());
+                System.out.println(myHashedPassword);
+                user.setPassword(myHashedPassword);
                 userRepository.save(user);
             }
         }
@@ -107,9 +111,16 @@ public class UserServiceImplementation implements UserService{
     }
 
     @Override
+    public void deleteall() {
+        userRepository.deleteAll();
+    }
+
+    @Override
     public LoginResponse login(LoginRequest loginRequest) {
         User user = userRepository.findUserByEmailAddress(loginRequest.getUserEmail()).orElseThrow(( )-> new PasswordManagerApplicationException("user account with email does not exists"));
-        boolean isValidUser = user.getPassword().equals(loginRequest.getUserPassword());
+        String myHashedPassword = DigestUtils.sha256Hex(user.getPassword());
+        String myHashedLoginPassword = DigestUtils.sha256Hex(user.getPassword());
+        boolean isValidUser = myHashedPassword.equals(myHashedLoginPassword);
         LoginResponse response = new LoginResponse();
         if(isValidUser) {
             response.setMessage("login successful");

@@ -11,6 +11,7 @@ import com.africa.semicolon.passwordmanagerapplication.models.Url;
 import com.africa.semicolon.passwordmanagerapplication.models.User;
 import com.africa.semicolon.passwordmanagerapplication.repositories.UrlRepository;
 import com.africa.semicolon.passwordmanagerapplication.repositories.UserRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,10 @@ public class UrlServiceImplementation implements  UrlService {
         User user = userRepository.findUserByEmailAddress(urlRequest.getUserEmailAddress())
                 .orElseThrow(( )-> new UrlException("user account with email does not exists"));
         Url url = new Url();
-        if (user.getPassword().equals(urlRequest.getUserPassword())) {
+        String userHashedPassword = DigestUtils.sha256Hex(urlRequest.getUserPassword());
+        urlRequest.setUserPassword(userHashedPassword);
+        System.out.println(userHashedPassword);
+        if ((user.getPassword().equals(urlRequest.getUserPassword()))) {
            modelMapper.map(urlRequest, url);
             Url saved = urlRepository.save(url);
             user.getUrls().add(saved);
@@ -97,6 +101,11 @@ public class UrlServiceImplementation implements  UrlService {
         DeleteUrlResponse deletedResponse = new DeleteUrlResponse();
         deletedResponse.setMessage("Deleted Successfully");
         return deletedResponse;
+    }
+
+    @Override
+    public void deleteall() {
+        urlRepository.deleteAll();
     }
 
     @Override

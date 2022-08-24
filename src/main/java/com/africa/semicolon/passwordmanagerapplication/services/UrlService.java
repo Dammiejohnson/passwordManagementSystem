@@ -16,6 +16,8 @@ public interface UrlService {
     List<UpdateUrlResponse> updateUrl(String userEmail, UpdateUrlRequest request);
     DeleteUrlResponse deleteUrl(String Url);
 
+    void deleteall();
+
 
     long count();
 }

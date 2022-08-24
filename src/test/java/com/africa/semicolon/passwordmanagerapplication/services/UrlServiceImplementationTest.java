@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @SpringBootTest
-//@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
+@ImportAutoConfiguration(exclude = EmbeddedMongoAutoConfiguration.class)
 class UrlServiceImplementationTest {
     @Autowired
     UserService userService;
@@ -38,8 +38,6 @@ class UrlServiceImplementationTest {
     UserRepository userRepository;
     @Autowired
     UrlService urlService;
-    @Autowired
-    UrlRepository urlRepository;
 
     private AddUrlRequest urlRequest;
     private AddUserRequest userRequest;
@@ -64,8 +62,8 @@ class UrlServiceImplementationTest {
 
     @AfterEach
     void tearDown() {
-        urlRepository.deleteAll();
-        userRepository.deleteAll();
+        urlService.deleteall();
+        userService.deleteall();
     }
 
 

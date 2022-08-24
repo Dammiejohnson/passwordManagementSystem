@@ -22,7 +22,6 @@ public class User {
     private String emailAddress;
     private String phoneNumber;
     private String password;
-    @DBRef
     private Set<Url> urls = new HashSet<>();
 
 
